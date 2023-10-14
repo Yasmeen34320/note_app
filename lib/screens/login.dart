@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:note_app/Shared/linkapi.dart';
 import 'package:note_app/Shared/restapi.dart';
+import 'package:note_app/main.dart';
 import 'package:note_app/screens/signup.dart';
 import '../Shared/customfeild.dart';
 import '../Shared/valid.dart';
@@ -23,16 +24,21 @@ class _LoginState extends State<Login> {
   restapi _rest = restapi();
   bool loading = false;
   login() async {
-    loading = true;
-    setState(() {});
     if (formstate.currentState!.validate()) {
+      loading = true;
+      setState(() {});
       var response = await _rest.posttrequest(
           linklogin, {"pass": password.text, "email": email.text});
-      loading = false;
-      setState(() {});
+
       if (response['status'] == "success") {
+        sharedPrefe.setString("id", response['data']['id'].toString());
+        sharedPrefe.setString("username", response['data']['username']);
+        sharedPrefe.setString("email", response['data']['email']);
+
         Navigator.of(context).pushNamedAndRemoveUntil("home", (route) => false);
       } else {
+        loading = false;
+        setState(() {});
         AwesomeDialog(
             context: context,
             title: "Error",
@@ -114,6 +120,7 @@ class _LoginState extends State<Login> {
                     child: MaterialButton(
                       onPressed: () async {
                         await login();
+                        print(loading);
                       },
                       minWidth: MediaQuery.of(context).size.width *
                           0.6, // Replace with your desired width

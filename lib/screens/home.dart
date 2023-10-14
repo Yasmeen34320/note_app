@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:note_app/main.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -20,6 +21,15 @@ class _HomeState extends State<Home> {
             ),
             onPressed: () {},
           ),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  sharedPrefe.clear();
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, "login", (route) => false);
+                },
+                icon: Icon(Icons.exit_to_app))
+          ],
           title: Text(
             "Home",
             //  style: TextStyle(color: Colors.white),

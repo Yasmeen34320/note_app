@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:note_app/screens/home.dart';
 import 'package:note_app/screens/login.dart';
 import 'package:note_app/screens/signup.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+late SharedPreferences sharedPrefe;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  sharedPrefe = await SharedPreferences.getInstance();
   runApp(const MyApp());
 }
 
@@ -37,7 +41,7 @@ class MyApp extends StatelessWidget {
         ),
         //   useMaterial3: true,
       ),
-      initialRoute: "login",
+      initialRoute: sharedPrefe.getString("id") == null ? "login" : "home",
       routes: {
         "login": (context) => Login(),
         "signup": (context) => SignUp(),
