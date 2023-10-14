@@ -3,18 +3,20 @@ import 'package:flutter/material.dart';
 class CustomTextForm extends StatelessWidget {
   final String hint;
   final Icon hinticon;
+  final String? Function(String?) valid;
   final TextEditingController mycontroller;
   const CustomTextForm(
       {super.key,
       required this.hint,
       required this.mycontroller,
-      required this.hinticon});
+      required this.hinticon , required this.valid});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: TextFormField(
+        validator:valid,
         controller: mycontroller,
         decoration: InputDecoration(
           filled: true,
@@ -30,16 +32,7 @@ class CustomTextForm extends StatelessWidget {
           hintText: hint,
           prefixIcon: hinticon,
         ),
-        validator: (value) {
-          if (value!.isEmpty) {
-            return 'Please enter your username';
-          } else if (value.length < 9) {
-            return 'Username must be at least 9 characters long';
-          } else if (!RegExp(r'^[A-Z][a-zA-Z0-9]*$').hasMatch(value)) {
-            return 'Username must start with an uppercase letter and contain only letters and numbers';
-          }
-          return null;
-        },
+
       ),
     );
   }

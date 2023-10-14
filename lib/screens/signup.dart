@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
 import 'package:note_app/Shared/linkapi.dart';
 import 'package:note_app/Shared/restapi.dart';
+import 'package:note_app/Shared/valid.dart';
 import 'package:note_app/screens/home.dart';
 import 'package:note_app/screens/login.dart';
 import '../Shared/customfeild.dart';
@@ -14,7 +15,7 @@ class SignUp extends StatefulWidget {
   State<SignUp> createState() => _SignUpState();
 }
 
-// v2 (Geraftaar 1985) , v (Shaan 1980) , Coolie 1983
+
 class _SignUpState extends State<SignUp> {
   GlobalKey<FormState> formstate = GlobalKey();
   restapi _rest = restapi();
@@ -23,16 +24,42 @@ class _SignUpState extends State<SignUp> {
   TextEditingController username = TextEditingController();
 
   signUp() async {
-    var response = await _rest.posttrequest(linkSignUp, {
-      "username": username.text,
-      "pass": password.text,
-      "email": email.text
-    });
-    if (response['status'] == "success") {
-      Navigator.of(context).pushNamedAndRemoveUntil("home", (route) => false);
-    } else {
-      print("SignUp failed");
+    if(formstate.currentState!.validate()) {
+      var response = await _rest.posttrequest(linkSignUp, {
+        "username": username.text,
+        "pass": password.text,
+        "email": email.text
+      });
+      if (response['status'] == "success") {
+        showMyDialog(context , "registration has been successful","login");
+      } else {
+        print("SignUp failed");
+      }
+    }else {
+      //showMyDialog(context , "Unsuccessful regesteration","signup");
     }
+  }
+  void showMyDialog(BuildContext context , String Message , String Route) {
+    showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content:  Text(
+             " $Message"
+            ),
+            actions: <Widget>[
+              Center(
+                child: ElevatedButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        "$Route", (route) => false);
+                  },
+                ),
+              ),
+            ],
+          );
+        });
   }
 
   @override
@@ -71,16 +98,25 @@ class _SignUpState extends State<SignUp> {
               child: Column(
                 children: [
                   CustomTextForm(
+                    valid: (val){
+                      return validInput(val!, 3, 20);
+                    },
                     mycontroller: username,
                     hint: "username",
                     hinticon: Icon(Icons.person_2_outlined),
                   ),
                   CustomTextForm(
+                    valid: (val){
+                      return validInput(val!, 10, 40);
+                    },
                     mycontroller: email,
                     hint: "email",
                     hinticon: Icon(Icons.person),
                   ),
                   CustomTextForm(
+                    valid: (val){
+                      return validInput(val!, 5, 10);
+                    },
                     mycontroller: password,
                     hint: "password",
                     hinticon: Icon(Icons.lock),
